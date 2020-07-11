@@ -15,11 +15,11 @@
 //宏定义    
 #define FALSE  -1    
 #define TRUE   0
-int UART0_Open(int fd, char*port);
-void UART0_Close(int fd) ; 
-int UART0_Set(int fd,int speed,int flow_ctrl,int databits,int stopbits,int parity);
-int UART0_Init(int fd, int speed,int flow_ctrl,int databits,int stopbits,int parity) ;
-int UART0_Recv(int fd, unsigned char *rcv_buf,int data_len);
-int UART0_Send(int fd, unsigned char *send_buf,int data_len);
+int uart_Open(int fd, char*port);
+void uart_Close(int fd) ; 
+int uart_Set(int fd,int speed,int flow_ctrl,int databits,int stopbits,int parity);
+int uart_Init(int fd, int speed,int flow_ctrl,int databits,int stopbits,int parity) ;
+int uart_Recv(int fd, unsigned char *rcv_buf,int data_len);
+int uart_Send(int fd, unsigned char *send_buf,int data_len);
  
 #endif

@@ -13,21 +13,34 @@
 #include<pthread.h>    
 #include "usart.h"
 
-#define  REC_MASSAGE_LENGTH  30
-#define  SEND_MASSAGE_LENGTH 8 
-extern int fd;
+#define  REC_MASSAGE_LENGTH_NB  30
+#define  SEND_MASSAGE_LENGTH_NB 8 
 
-unsigned char *  gu_rec_massage_temp;
-unsigned char *  gu_rec_massage;
-int gu_rec_massage_length;
+#define  REC_MASSAGE_LENGTH_DEVICE  30
+#define  SEND_MASSAGE_LENGTH_DEVICE 8 
 
-unsigned char *  gu_send_massage;
+extern int fd_nb;
+extern int fd_device;
+
+unsigned char *  gu_rec_massage_nb_temp;
+unsigned char *  gu_rec_massage_nb;
+int gu_rec_massage_length_nb;
+unsigned char *  gu_send_massage_nb;
+
+unsigned char *  gu_rec_massage_device_temp;
+unsigned char *  gu_rec_massage_device;
+int gu_rec_massage_length_device;
+unsigned char *  gu_send_massage_device;
 
 
-int  rec_massage_from_serial_temp();
-void  rec_massage_from_serial();
 
-int  send_massage_to_serial();
+int  rec_massage_from_nb_temp();
+void  rec_massage_from_nb_serial();
+int  send_massage_to_nb();
+
+int  rec_massage_from_device_temp();
+void  rec_massage_from_device_serial();
+int  send_massage_to_device();
 
 void  init_memory();
 void  free_memory();

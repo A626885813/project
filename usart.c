@@ -253,7 +253,7 @@ int uart_Recv(int fd, unsigned char *rcv_buf,int data_len)
        
     //使用select实现串口的多路通信    
     fs_sel = select(fd+1,&fs_read,NULL,NULL,&time);    
-    printf("fs_sel = %d\n",fs_sel);    
+   // printf("fs_sel = %d\n",fs_sel);    
     if(fs_sel)    
     {    
         len = read(fd,rcv_buf,data_len);    
@@ -263,6 +263,7 @@ int uart_Recv(int fd, unsigned char *rcv_buf,int data_len)
     {    
         return FALSE;    
     }         
+    sleep(1);
 }    
 /********************************************************************  
 * 名称：            uart_Send  

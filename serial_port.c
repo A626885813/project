@@ -1,115 +1,129 @@
 #include "serial_port.h"
+#include "usart.h"
+
 
 void  init_memory()
 {
-  gu_rec_massage_nb_temp=  (unsigned char *) malloc(8);
-  gu_rec_massage_nb=  (unsigned char *) malloc(REC_MASSAGE_LENGTH_NB);
-  gu_send_massage_nb=  (unsigned char *) malloc(SEND_MASSAGE_LENGTH_NB);
-  gu_rec_massage_length_nb=0;
-}
-
-int  rec_massage_from_nb_temp()
-{
-  int len=uart_Recv(fd_nb,gu_rec_massage_nb_temp,1);
-  if(len>0)
-  {
-    if((gu_rec_massage_length_nb+len)<REC_MASSAGE_LENGTH_NB)
-    {
-    memcpy(gu_rec_massage_nb+gu_rec_massage_length_nb,gu_rec_massage_nb_temp,len);
-    gu_rec_massage_length_nb+=len;
-    }
-    else
-    {
-    printf("the receive_buf is full\n");
-    }
-    return 0;
-  }
-  else
-  {
-    printf("cannot receive data\n");    
-    return 1;
-  }
-  sleep(1);
-}
-
-void  rec_massage_from_nb()
-{
-    gu_rec_massage_nb[gu_rec_massage_length_nb]='\0';
-    printf(" receive data is  %s\n",gu_rec_massage_nb);    
-}
-
-int  send_massage_to_nb()
-{
-  int len;
-  len =uart_Send(fd_nb,gu_send_massage_nb,SEND_MASSAGE_LENGTH_NB);
-  if(len>0)
-  {
-    for(int i=0;i<len;i++)
-    {
-    printf(" send data is  %x\n",gu_send_massage_nb[i]);    
-    }
-    memset(gu_send_massage_nb,0x00,SEND_MASSAGE_LENGTH_NB);
-    return 0;
-  }
-  else{
-    printf(" send data failure  \n");    
-    return 1;
-  }
-}
-
-
-int  rec_massage_from_device_temp()
-{
-  int len=uart_Recv(fd_device,gu_rec_massage_device_temp,1);
-  if(len>0)
-  {
-    if((gu_rec_massage_length_device+len)<REC_MASSAGE_LENGTH_DEVICE)
-    {
-    memcpy(gu_rec_massage_device+gu_rec_massage_length_device,gu_rec_massage_device_temp,len);
-    gu_rec_massage_length_device+=len;
-    }
-    else
-    {
-    printf("the receive_buf is full\n");
-    }
-    return 0;
-  }
-  else
-  {
-    printf("cannot receive data\n");    
-    return 1;
-  }
-  sleep(1);
-}
-
-void  rec_massage_from_device()
-{
-    gu_rec_massage_device[gu_rec_massage_length_device]='\0';
-    printf(" receive data is  %s\n",gu_rec_massage_device);    
-}
-
-int  send_massage_to_device()
-{
-  int len;
-  len =uart_Send(fd_device,gu_send_massage_device,SEND_MASSAGE_LENGTH_DEVICE);
-  if(len>0)
-  {
-    for(int i=0;i<len;i++)
-    {
-    printf(" send data is  %x\n",gu_send_massage_device[i]);    
-    }
-    memset(gu_send_massage_device,0x00,SEND_MASSAGE_LENGTH_DEVICE);
-    return 0;
-  }
-  else{
-    printf(" send data failure  \n");    
-    return 1;
-  }
+  rec_massage_nb_temp =arraylist_new(100);
+  rec_massage_nb =arraylist_new(10);
+  rec_massage_over_sign_nb=0;
+  nb_temp=(unsigned char * )malloc(100);
+  device_temp=(unsigned char * )malloc(100);
 }
 
 void  free_memory()
 {
-  free(gu_rec_massage_device);
-  free(gu_rec_massage_device_temp);
-  free(gu_send_massage_device);
+  arraylist_free(rec_massage_nb_temp);
+  arraylist_free(rec_massage_nb );
+  free(nb_temp);
+  free(device_temp);
 }
+
+void rec_from_nb()
+{
+     while(!rec_massage_over_sign_nb)
+     {
+       if(rec_massage_from_nb_temp())
+       {
+        printf("enter to pross\n"); 
+        rec_massage_from_nb_pre();
+       }
+     }
+      rec_massage_over_sign_nb=0;
+}
+
+void   rec_massage_from_nb_pre()
+{
+   static unsigned int i=0;
+  //static unsigned int index=0;
+  static unsigned char received=0;
+    if(received)
+    {
+      goto received_sign;
+    }
+        while(i<(rec_massage_nb_temp->length-1)&&!rec_massage_over_sign_nb)
+        {
+         if( rec_massage_nb_temp->data[i]==0x05)
+           {
+            if(rec_massage_nb_temp->data[i+1]==0x0a)
+              {
+                received=1;
+                i=2;
+received_sign:
+      printf("received_sign  \n");
+                while(i<(rec_massage_nb_temp->length-1)&&!(rec_massage_nb_temp->data[i]==0x50&&rec_massage_nb_temp->data[i+1]==0xa0))
+                {
+                  arraylist_append(rec_massage_nb,rec_massage_nb_temp->data[i]);
+                  i++;
+
+                }
+                if(i<(rec_massage_nb_temp->length-1)&&(rec_massage_nb_temp->data[i]==0x50&&rec_massage_nb_temp->data[i+1]==0xa0))
+                  {
+                  printf("over  \n");
+                    rec_massage_over_sign_nb=1;
+                    received=0;
+                    i=0;
+                    arraylist_clear(rec_massage_nb_temp);
+                  }
+              }
+           }
+         i++;
+        }
+}
+
+int   rec_massage_from_nb_temp()
+{
+  unsigned int len =uart_Recv(fd_nb,nb_temp,8);
+  unsigned int i;
+  if(len>0)
+  {
+    for( i=0;i<len;i++)
+    {
+      if(rec_massage_nb_temp->length<(rec_massage_nb_temp->_alloced-1))
+      {
+      arraylist_append(rec_massage_nb_temp,nb_temp[i]);
+      printf("received temp  data is %x \n",nb_temp[i]);
+      }
+      else
+      {
+      printf("temp is full  \n");
+      }
+    }
+    return 1;
+  }
+  else
+  {
+    printf("cannot receive data");
+    return 0;
+
+  }
+}
+
+int  send_massage_to_nb(unsigned char *  send_massage,int data_len)
+{ 
+  int len;
+  len =uart_Send(fd_nb,send_massage,data_len);
+  if(len>0)
+  {
+    for(int i=0;i<len;i++)
+    {
+    printf(" send data is  %x\n",send_massage[i]);    
+    }
+    return 1;
+  }
+  else{
+    printf(" send data failure  \n");    
+    return 0;
+  }
+}
+
+void  rec_massage_from_device()
+{
+
+}
+int  send_massage_to_device()
+{
+
+}
+
+

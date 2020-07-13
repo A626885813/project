@@ -12,37 +12,30 @@
 #include<string.h>    
 #include<pthread.h>    
 #include "usart.h"
+#include "arraylist.h"
 
-#define  REC_MASSAGE_LENGTH_NB  30
-#define  SEND_MASSAGE_LENGTH_NB 8 
-
-#define  REC_MASSAGE_LENGTH_DEVICE  30
-#define  SEND_MASSAGE_LENGTH_DEVICE 8 
 
 extern int fd_nb;
 extern int fd_device;
 
-unsigned char *  gu_rec_massage_nb_temp;
-unsigned char *  gu_rec_massage_nb;
-int gu_rec_massage_length_nb;
-unsigned char *  gu_send_massage_nb;
+int rec_massage_over_sign_nb;
+ArrayList *  rec_massage_nb_temp;
+ArrayList *  rec_massage_nb;
 
-unsigned char *  gu_rec_massage_device_temp;
-unsigned char *  gu_rec_massage_device;
-int gu_rec_massage_length_device;
-unsigned char *  gu_send_massage_device;
+unsigned char * nb_temp;
+unsigned char * device_temp;
 
 
+int   rec_massage_from_nb_temp();
+void   rec_massage_from_nb_pre();
+void rec_from_nb();
+int  send_massage_to_nb(unsigned char *  send_massage,int data_len);
 
-int  rec_massage_from_nb_temp();
-void  rec_massage_from_nb_serial();
-int  send_massage_to_nb();
-
-int  rec_massage_from_device_temp();
-void  rec_massage_from_device_serial();
+void  rec_massage_from_device();
 int  send_massage_to_device();
 
 void  init_memory();
 void  free_memory();
+
 
 #endif

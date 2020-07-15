@@ -1,15 +1,3 @@
-/*********************************************************************************
- *      Copyright:  (C) 2018 Yujie
- *                  All rights reserved.
- *
- *       Filename:  usart.c
- *    Description:  串口配置
- *                 
- *        Version:  1.0.0(08/27/2018)
- *         Author:  yanhuan <yanhuanmini@foxmail.com>
- *      ChangeLog:  1, Release initial version on "08/23/2018 17:28:51 PM"
- *                 
- ********************************************************************************/
  
 #include"usart.h"
 /*******************************************************************  
@@ -21,7 +9,7 @@
 *******************************************************************/    
 int uart_Open(int fd, char*port)
 {    
-    fd = open( port, O_RDWR|O_NOCTTY|O_NDELAY);    
+    fd = open( port, O_RDWR|O_NOCTTY);    
     if (fd<0)    
     {    
         perror("Can't Open Serial Port");    
@@ -190,7 +178,7 @@ int uart_Set(int fd,int speed,int flow_ctrl,int databits,int stopbits,int parity
     //options.c_lflag &= ~(ISIG | ICANON);    
        
     //设置等待时间和最小接收字符    
-    options.c_cc[VTIME] = 50; /* 读取一个字符等待1*(1/10)s */      
+    options.c_cc[VTIME] = 0; /* 读取一个字符等待1*(1/10)s */      
     options.c_cc[VMIN] = 8; /* 读取字符的最少个数为1 */    
        
     //如果发生数据溢出，接收数据，但是不再读取 刷新收到的数据但是不读    
@@ -291,3 +279,15 @@ int uart_Send(int fd, unsigned char *send_buf,int data_len)
     }    
        
 }    
+
+
+
+int uart_Clear_rec_buf(int fd)
+{
+tcflush(fd, TCIFLUSH);    //清空输入缓存  
+}
+
+int uart_Clear_send_buf(int fd)
+{
+
+}

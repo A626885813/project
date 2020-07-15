@@ -21,5 +21,7 @@ int uart_Set(int fd,int speed,int flow_ctrl,int databits,int stopbits,int parity
 int uart_Init(int fd, int speed,int flow_ctrl,int databits,int stopbits,int parity) ;
 int uart_Recv(int fd, unsigned char *rcv_buf,int data_len);
 int uart_Send(int fd, unsigned char *send_buf,int data_len);
+int uart_Clear_rec_buf(int fd);
+int uart_Clear_send_buf(int fd);
  
 #endif

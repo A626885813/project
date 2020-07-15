@@ -45,6 +45,7 @@ int main(int argc, char **argv)
         printf("Set Port Exactly!\n"); 
         sleep(1);   
     }while(FALSE == err || FALSE == fd_nb);    
+     /*
 
          printf("main_pid is  %d  \n",getpid());
 
@@ -69,9 +70,8 @@ int main(int argc, char **argv)
       while(1){
 
       }
+*/
 
-
-/*
      init_all();
 
      while(1)
@@ -83,7 +83,7 @@ int main(int argc, char **argv)
        }
         arraylist_clear(rec_massage_nb);
      }
-*/
+
 
   uart_Close(fd_nb);     
 }    

@@ -14,6 +14,8 @@
 #include "usart.h"
 #include "arraylist.h"
 
+#define  REC_MASSAGE_NB_TEMP  1000
+#define  REC_MASSAGE_NB 50 
 
 extern int fd_nb;
 extern int fd_device;

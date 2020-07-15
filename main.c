@@ -27,8 +27,6 @@ void init_all()
 int main(int argc, char **argv)    
 {
     int err;               //返回调用函数的状态    
-    pid_t  pid1;
-    pid_t  pid2;
     if(argc != 2)    
     {    
         printf("Usage: %s /dev/ttySn 0      #(send data)\n",argv[0]);
@@ -87,3 +85,4 @@ int main(int argc, char **argv)
 
   uart_Close(fd_nb);     
 }    
+

@@ -9,7 +9,7 @@ void  init_memory()
   rec_massage_over_sign_nb=0;
 
 
-  nb_temp=(unsigned char * )malloc(100);
+  nb_temp=(unsigned char * )malloc(20);
   device_temp=(unsigned char * )malloc(100);
 }
 
@@ -28,7 +28,7 @@ void rec_from_nb()
      {
        if(rec_massage_from_nb_temp())
        {
-        printf("enter to pross\n");
+        //printf("enter to pross\n");
         rec_massage_from_nb_pre();
        }
      }
@@ -40,8 +40,8 @@ void   rec_massage_from_nb_pre()
    static unsigned int i=0;
   //static unsigned int index=0;
   static unsigned char received=0;
-        printf("temp length %d\n",rec_massage_nb_temp->length);
-        printf("i is  %d\n",i);
+       // printf("temp length %d\n",rec_massage_nb_temp->length);
+        //printf("i is  %d\n",i);
     if(received)
     {
       goto received_sign;
@@ -55,10 +55,10 @@ void   rec_massage_from_nb_pre()
                 received=1;
                 i=2;
 received_sign:
-      printf("received_sign  \n");
+      //printf("received_sign  \n");
                 while(i<(rec_massage_nb_temp->length-1)&&!(rec_massage_nb_temp->data[i]==0x50&&rec_massage_nb_temp->data[i+1]==0xa0))
                 {
-      printf("select 1 \n");
+      //printf("select 1 \n");
                   arraylist_append(rec_massage_nb,rec_massage_nb_temp->data[i]);
                   i++;
                 }
@@ -69,6 +69,7 @@ received_sign:
                     received=0;
                     i=0;
                     arraylist_clear(rec_massage_nb_temp);
+                     printf("----------------------------------  \n");
                   }
               }
            }
@@ -79,16 +80,18 @@ received_sign:
 
 int   rec_massage_from_nb_temp()
 {
-  unsigned int len =uart_Recv(fd_nb,nb_temp,10);
-  unsigned int i;
+   int len =uart_Recv(fd_nb,nb_temp,10);
+   int i;
+  printf("old len is %d\n",len);
   if(len>0)
   {
+      printf("len is  %d \n",len);
     for( i=0;i<len;i++)
     {
       if(rec_massage_nb_temp->length<REC_MASSAGE_NB_TEMP-1)
       {
       arraylist_append(rec_massage_nb_temp,nb_temp[i]);
-      printf("received temp  data is %x \n",rec_massage_nb_temp->data[i]);
+      //printf("received temp  data is %x \n",rec_massage_nb_temp->data[i]);
       }
       else
       {

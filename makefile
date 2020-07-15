@@ -1,7 +1,7 @@
 CC      = gcc
 CXX     = g++
 LINK    = gcc
-CFLAGS  = -g -Wall -O2
+CFLAGS  = -g -Wall 
 TARGET  = out
 SRCS    = $(wildcard *.cpp)
 SRCS    += $(wildcard *.c)

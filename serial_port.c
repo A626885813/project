@@ -49,9 +49,10 @@ void   rec_massage_from_nb_pre()
     }
          if( rec_massage_nb_temp->data[i]==0x05)
            {
-           //printf("enter first temp  \n");
+           printf("enter 05  \n");
             if(rec_massage_nb_temp->data[i+1]==0x0A)
             {
+           printf("enter 0a  \n");
                 received=1;
                 i=2;
 received_sign:
@@ -72,18 +73,26 @@ received_sign:
                     i=0;
                     arraylist_clear(rec_massage_nb_temp);
                     printf("over  \n");
-                     printf("----------------------------------  \n");
+                    printf("----------------------------------  \n");
                   }
             }
             else
             {
              arraylist_clear(rec_massage_nb_temp);
+             if(rec_massage_nb_temp->data[i+1]==0x05)
              arraylist_append(rec_massage_nb_temp,rec_massage_nb_temp->data[i+1]);
              printf("delete temp length is  %d  \n",rec_massage_nb_temp->length);
              i=0;
             }
-
            }
+         else
+         {
+          arraylist_clear(rec_massage_nb_temp);
+             if(rec_massage_nb_temp->data[i+1]==0x05)
+             arraylist_append(rec_massage_nb_temp,rec_massage_nb_temp->data[i+1]);
+           printf("not enter 05  \n");
+             i=0;
+         }
   
 
 
@@ -137,7 +146,7 @@ int   rec_massage_from_nb_temp()
      //printf("len is  ---------------- %d  \n",len);
     for( i=0;i<len;i++)
     {
-    // printf("temp  is************************* %x  \n",nb_temp[i]);
+     printf("temp  is************************* %x  \n",nb_temp[i]);
       if(rec_massage_nb_temp->length<REC_MASSAGE_NB_TEMP-1)
       {
       arraylist_append(rec_massage_nb_temp,nb_temp[i]);

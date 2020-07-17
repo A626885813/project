@@ -24,11 +24,9 @@ void  free_memory()
 void rec_from_nb()
 {
      while(!rec_massage_over_sign_nb)
-
      {
        if(rec_massage_from_nb_temp())
        {
-        //printf("enter to pross\n");
         rec_massage_from_nb_pre();
        }
      }
@@ -38,10 +36,60 @@ void rec_from_nb()
 void   rec_massage_from_nb_pre()
 {
    static unsigned int i=0;
-  //static unsigned int index=0;
   static unsigned char received=0;
-       // printf("temp length %d\n",rec_massage_nb_temp->length);
-        //printf("i is  %d\n",i);
+    if(received)
+    {
+      goto received_sign;
+    }
+
+    if(rec_massage_nb_temp->length<2)
+    {
+     //printf("enter  it  \n");
+     return ;
+    }
+         if( rec_massage_nb_temp->data[i]==0x05)
+           {
+           //printf("enter first temp  \n");
+            if(rec_massage_nb_temp->data[i+1]==0x0A)
+            {
+                received=1;
+                i=2;
+received_sign:
+      //          printf("before i is   %d \n",i);
+       //         printf("temp length is  %d  \n",rec_massage_nb_temp->length);
+                while(i<(rec_massage_nb_temp->length-1)&&!(rec_massage_nb_temp->data[i]==0x50&&rec_massage_nb_temp->data[i+1]==0xA0))
+                {
+                  arraylist_append(rec_massage_nb,rec_massage_nb_temp->data[i]);
+                  i++;
+                }
+
+                if(i<(rec_massage_nb_temp->length-1)&&(rec_massage_nb_temp->data[i]==0x50&&rec_massage_nb_temp->data[i+1]==0xA0))
+                  {
+        //           printf("after i is   %d \n",i);
+                  //arraylist_append(rec_massage_nb,rec_massage_nb_temp->data[i]);
+                    rec_massage_over_sign_nb=1;
+                    received=0;
+                    i=0;
+                    arraylist_clear(rec_massage_nb_temp);
+                    printf("over  \n");
+                     printf("----------------------------------  \n");
+                  }
+            }
+            else
+            {
+             arraylist_clear(rec_massage_nb_temp);
+             arraylist_append(rec_massage_nb_temp,rec_massage_nb_temp->data[i+1]);
+             printf("delete temp length is  %d  \n",rec_massage_nb_temp->length);
+             i=0;
+            }
+
+           }
+  
+
+
+  /*
+   static unsigned int i=0;
+  static unsigned char received=0;
     if(received)
     {
       goto received_sign;
@@ -50,19 +98,18 @@ void   rec_massage_from_nb_pre()
         {
          if( rec_massage_nb_temp->data[i]==0x05)
            {
-            if(rec_massage_nb_temp->data[i+1]==0x0a)
+            if(rec_massage_nb_temp->data[i+1]==0x0A)
               {
                 received=1;
                 i=2;
 received_sign:
-      //printf("received_sign  \n");
-                while(i<(rec_massage_nb_temp->length-1)&&!(rec_massage_nb_temp->data[i]==0x50&&rec_massage_nb_temp->data[i+1]==0xa0))
+                //printf("rec nb temp is  %d  \n",rec_massage_nb_temp->length);
+                while(i<(rec_massage_nb_temp->length-1)&&!(rec_massage_nb_temp->data[i]==0x50&&rec_massage_nb_temp->data[i+1]==0xA0))
                 {
-      //printf("select 1 \n");
                   arraylist_append(rec_massage_nb,rec_massage_nb_temp->data[i]);
                   i++;
                 }
-                if(i<(rec_massage_nb_temp->length-1)&&(rec_massage_nb_temp->data[i]==0x50&&rec_massage_nb_temp->data[i+1]==0xa0))
+                if(i<(rec_massage_nb_temp->length-1)&&(rec_massage_nb_temp->data[i]==0x50&&rec_massage_nb_temp->data[i+1]==0xA0))
                   {
                     printf("over  \n");
                     rec_massage_over_sign_nb=1;
@@ -73,30 +120,32 @@ received_sign:
                   }
               }
            }
-         if(!rec_massage_over_sign_nb)
+         if(!received&&!(rec_massage_nb_temp->data[i]==0x05&&rec_massage_nb_temp->data[i+1]==0x0A))
+         {
          i++;
+         }
         }
+        */
 }
 
 int   rec_massage_from_nb_temp()
 {
-   int len =uart_Recv(fd_nb,nb_temp,10);
+   int len =uart_Recv(fd_nb,nb_temp,1);
    int i;
-  printf("old len is %d\n",len);
   if(len>0)
   {
-      printf("len is  %d \n",len);
+     //printf("len is  ---------------- %d  \n",len);
     for( i=0;i<len;i++)
     {
+      //printf("temp is is************************* %x  \n",nb_temp[i]);
       if(rec_massage_nb_temp->length<REC_MASSAGE_NB_TEMP-1)
       {
       arraylist_append(rec_massage_nb_temp,nb_temp[i]);
-      //printf("received temp  data is %x \n",rec_massage_nb_temp->data[i]);
       }
       else
       {
-       arraylist_clear(rec_massage_nb_temp);
-      //printf("temp is full  \n");
+      // arraylist_clear(rec_massage_nb_temp);
+       printf("temp is full  \n");
       }
     }
     return 1;

@@ -174,7 +174,8 @@ int uart_Set(int fd,int speed,int flow_ctrl,int databits,int stopbits,int parity
     //修改输出模式，原始数据输出    
     options.c_oflag &= ~OPOST;    
       
-    options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);    
+    options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);  
+    options.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
     //options.c_lflag &= ~(ISIG | ICANON);    
        
     //设置等待时间和最小接收字符    

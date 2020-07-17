@@ -75,6 +75,7 @@ int main(int argc, char **argv)
      while(1)
      {
        rec_from_nb();
+       
        for(unsigned int h =0;h<rec_massage_nb->length;h++)
        {
          printf("final received data is %x  \n",rec_massage_nb->data[h]);

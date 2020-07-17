@@ -137,7 +137,7 @@ int   rec_massage_from_nb_temp()
      //printf("len is  ---------------- %d  \n",len);
     for( i=0;i<len;i++)
     {
-      //printf("temp is is************************* %x  \n",nb_temp[i]);
+    // printf("temp  is************************* %x  \n",nb_temp[i]);
       if(rec_massage_nb_temp->length<REC_MASSAGE_NB_TEMP-1)
       {
       arraylist_append(rec_massage_nb_temp,nb_temp[i]);

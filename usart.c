@@ -1,12 +1,8 @@
  
 #include"usart.h"
-/*******************************************************************  
-*名称：             uart_Open  
-*功能：             打开串口并返回串口设备文件描述  
-*入口参数：         fd      文件描述符
-                    port    串口号(ttyS0,ttyS1,ttyS2)  
-*出口参数：正确返回为1，错误返回为0  
-*******************************************************************/    
+
+
+
 int uart_Open(int fd, char*port)
 {    
     fd = open( port, O_RDWR|O_NOCTTY);    
@@ -38,30 +34,12 @@ int uart_Open(int fd, char*port)
     printf("fd->open=%d\n",fd);    
     return fd;    
 }    
-/*******************************************************************  
-*名称：             uart_Close  
-*功能：             关闭串口并返回串口设备文件描述  
-*入口参数：         fd          文件描述符   
-                    port        串口号(ttyS0,ttyS1,ttyS2)  
-*出口参数：void  
-*******************************************************************/    
-     
+
 void uart_Close(int fd)    
 {    
     close(fd);    
 }    
 
-/*******************************************************************  
-*名称：             uart_Set  
-*功能：             设置串口数据位，停止位和效验位  
-*入口参数：         fd          串口文件描述符
-*                   speed       串口速度  
-*                   flow_ctrl   数据流控制  
-*                   databits    数据位   取值为 7 或者8  
-*                   stopbits    停止位   取值为 1 或者2  
-*                   parity      效验类型 取值为N,E,O,,S  
-*出口参数：正确返回为1，错误返回为0  
-*******************************************************************/    
 int uart_Set(int fd,int speed,int flow_ctrl,int databits,int stopbits,int parity)    
 {    
        
@@ -72,8 +50,6 @@ int uart_Set(int fd,int speed,int flow_ctrl,int databits,int stopbits,int parity
              
     struct termios options;    
        
-    /*  tcgetattr(fd,&options)得到与fd指向对象的相关参数，并将它们保存于options,该函数还可以测试配置是否正确，
-        该串口是否可用等。若调用成功，函数返回值为0，若调用失败，函数返回值为1.  */    
     if( tcgetattr( fd,&options)  !=  0)    
     {    
         perror("SetupSerial 1");        
@@ -177,10 +153,10 @@ int uart_Set(int fd,int speed,int flow_ctrl,int databits,int stopbits,int parity
     options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);  
     options.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
     //options.c_lflag &= ~(ISIG | ICANON);    
-       
+    
     //设置等待时间和最小接收字符    
-    options.c_cc[VTIME] = 0; /* 读取一个字符等待1*(1/10)s */      
-    options.c_cc[VMIN] = 8; /* 读取字符的最少个数为1 */    
+    options.c_cc[VTIME] = 0;  
+    options.c_cc[VMIN] = 1; /* 读取字符的最少个数为1 */    
        
     //如果发生数据溢出，接收数据，但是不再读取 刷新收到的数据但是不读    
     tcflush(fd,TCIFLUSH);    
@@ -193,18 +169,8 @@ int uart_Set(int fd,int speed,int flow_ctrl,int databits,int stopbits,int parity
     }    
     return (TRUE);     
 }    
-/*******************************************************************  
-*名称：                uart_Init()  
-*功能：                串口初始化  
-*入口参数：            fd         文件描述符    
-*                      speed      串口速度  
-*                      flow_ctrl  数据流控制  
-*                      databits   数据位   取值为 7 或者8  
-*                      stopbits   停止位   取值为 1 或者2  
-*                      parity     效验类型 取值为N,E,O,,S  
-*                        
-*出口参数：正确返回为1，错误返回为0  
-*******************************************************************/    
+
+
 int uart_Init(int fd, int speed,int flow_ctrl,int databits,int stopbits,int parity)    
 {    
     int err;    
@@ -219,14 +185,9 @@ int uart_Init(int fd, int speed,int flow_ctrl,int databits,int stopbits,int pari
     }    
 }    
      
-/*******************************************************************  
-* 名称：            uart_Recv  
-* 功能：            接收串口数据  
-* 入口参数：        fd         文件描述符      
-*                   rcv_buf    接收串口中数据存入rcv_buf缓冲区中  
-*                   data_len   一帧数据的长度  
-* 出口参数：        正确返回为1，错误返回为0  
-*******************************************************************/    
+
+
+
 int uart_Recv(int fd, unsigned char *rcv_buf,int data_len)    
 {    
     int len,fs_sel;    
@@ -254,14 +215,9 @@ int uart_Recv(int fd, unsigned char *rcv_buf,int data_len)
     }         
     sleep(1);
 }    
-/********************************************************************  
-* 名称：            uart_Send  
-* 功能：            发送数据  
-* 入口参数：        fd           文件描述符      
-*                   send_buf     存放串口发送数据  
-*                   data_len     一帧数据的个数  
-* 出口参数：        正确返回为1，错误返回为0  
-*******************************************************************/    
+
+
+
 int uart_Send(int fd, unsigned char *send_buf,int data_len)    
 {    
     int len = 0;    
@@ -282,7 +238,7 @@ int uart_Send(int fd, unsigned char *send_buf,int data_len)
 }    
 
 
-
+//  ******************************* uncomplete  *****************************
 int uart_Clear_rec_buf(int fd)
 {
 tcflush(fd, TCIFLUSH);    //清空输入缓存  
